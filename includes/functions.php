@@ -26,12 +26,12 @@ function find_all_subjects() {
     global $dblink;
 	
 	$query  = "SELECT * ";
-		$query .= "FROM subjects ";
-		$query .= "WHERE visible ";
-		$query .= "ORDER BY position";
+	$query .= "FROM subjects ";
+	$query .= "WHERE visible ";
+	$query .= "ORDER BY position";
 
-		$subject_set = $dblink->query($query);
-		confirm_query($subject_set);
+	$subject_set = $dblink->query($query);
+	confirm_query($subject_set);
 		
 	return $subject_set;
 }
