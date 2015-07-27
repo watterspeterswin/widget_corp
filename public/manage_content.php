@@ -18,14 +18,22 @@
 	<?php 
 		while ($subject=$subject_set->fetch_assoc()) {
 	?>
-		<li>
+		<li <?php 
+		   if ($subject["id"]==$selected_subject_id) {
+			   echo "class=\"selected\"" ;
+		   }
+		?>>
 		<a href="manage_content.php?subject=<?php echo urlencode($subject["id"])?>"><?php echo $subject["menu_name"]; ?></a>
 		<?php $page_set = find_pages_for_subject($subject["id"]); ?>
 		<ul class="pages">
 		<?php 
 		while ($pages=$page_set->fetch_assoc()) {
 		?>
-		<li>
+		<li<?php 
+		   if ($pages["id"]==$selected_page_id) {
+			   echo "class=\"selected\"" ;
+		   }
+		?>>
 		<a href="manage_content.php?page=<?php echo urlencode($pages["id"])?>"><?php echo $pages["menu_name"]; ?></a>
 		</li>
 		<?php 
