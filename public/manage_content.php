@@ -48,7 +48,7 @@
 			<li><a href="manage_admins.php">Manage Admins</a></li>
 			<li><a href="Logout.php">Logout</a></li>
 			<?php 
-			echo  " subject_id=". $selected_subject_id;
+			echo  "  subject_id=". $selected_subject_id;
             echo  " page_id=".	 $selected_page_id;
 			?>
 		</ul>
