@@ -13,10 +13,7 @@
 
 <div id="main">
 	<div id="navigation">
-	<?php 
-	$subject_set = find_all_subjects(); 
-	echo navigation($subject_set);
-	?>
+	<?php echo navigation($selected_subject_id, $selected_page_id); ?>
 	
 	</div>
 	<div id="page">
@@ -33,5 +30,5 @@
 		</ul>
 	</div>
 </div>
-<?php $subject_set->free_result(); ?>
+
 <?php include("../includes/layout/footer.php"); ?>

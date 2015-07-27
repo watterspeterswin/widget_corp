@@ -49,10 +49,9 @@ function find_pages_for_subject($subject_id) {
 	return $page_result;
 }
 
-function navigation($subject_set) {
-	global $selected_subject_id;
-	global $selected_page_id;
-	
+function navigation($selected_subject_id, $selected_page_id) {
+
+	$subject_set = find_all_subjects(); 
 	$output ="<ul  class=\"subjects\">";
 	while ($subject=$subject_set->fetch_assoc()) {
 	    $output.="<li";
@@ -74,14 +73,15 @@ function navigation($subject_set) {
 			$output.=urlencode($pages["id"]);
 			$output.="\">";
 			$output.=$pages["menu_name"]; 
-			$output.="</a>";
-			$output.="</li>";
+			$output.="</a></li>";
+
 		}
         $page_set->free_result();
-		$output.="</ul>";
-	$output.="</li>";
+		$output.="</ul></li>";
 	}
 	$output.="</ul>";
+	$subject_set->free_result();
+	
 	return $output;
 }
 
