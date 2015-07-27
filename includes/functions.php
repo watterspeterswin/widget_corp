@@ -49,12 +49,15 @@ function find_pages_for_subject($subject_id) {
 	return $page_result;
 }
 
-function navigation() {
+function navigation($subject_set) {
+	global $selected_subject_id;
+	global $selected_page_id;
+	
 	$output ="<ul  class=\"subjects\">";
 	while ($subject=$subject_set->fetch_assoc()) {
 	    $output.="<li";
 	    if ($subject["id"]==$selected_subject_id) {
-		    $output.= "class=\"selected\"" ;
+		    $output.= " class=\"selected\"" ;
 	    }
 		$output.=">";
 		$output.="<a href=\"manage_content.php?subject=";
@@ -64,12 +67,12 @@ function navigation() {
 		while ($pages=$page_set->fetch_assoc()) {
 			$output.="<li"; 
 			if ($pages["id"]==$selected_page_id) {
-			   $output.="class=\"selected\"";
+			   $output.=" class=\"selected\"";
 			}
 			$output.=">"; 
-			$output.="<a href="manage_content.php?page=";
+			$output.="<a href=\"manage_content.php?page=";
 			$output.=urlencode($pages["id"]);
-			$output.=">";
+			$output.="\">";
 			$output.=$pages["menu_name"]; 
 			$output.="</a>";
 			$output.="</li>";
