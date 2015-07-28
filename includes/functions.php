@@ -38,9 +38,11 @@ function find_all_subjects() {
 
 function find_pages_for_subject($subject_id) {	
 	global $dblink;
+	
+	$safe_subject_id = $dblink->real_escape_string($subject_id);
 	$query  = "SELECT * ";
 	$query .= "FROM pages ";
-	$query .= "WHERE visible AND subject_id = {$subject_id} ";
+	$query .= "WHERE visible AND subject_id = {$safe_subject_id} ";
 	$query .= "ORDER BY position";
 
 	$page_result = $dblink->query($query);
@@ -49,6 +51,48 @@ function find_pages_for_subject($subject_id) {
 	return $page_result;
 }
 
+function find_page_by_id($page_id) {	
+	global $dblink;
+	
+	$safe_page_id = $dblink->real_escape_string($page_id);
+	
+	$query  = "SELECT * ";
+	$query .= "FROM pages ";
+	$query .= "WHERE id = {$safe_page_id} ";
+	$query .= "ORDER BY position";
+
+	$page_result = $dblink->query($query);
+	confirm_query($page_result);
+	
+	if ($page = $page_result->fetch_assoc()) {
+		return $page;
+	}
+	else {
+		return null;
+	}
+}
+
+function find_subject_by_id($subject_id) {	
+	global $dblink;
+	
+	$safe_subject_id = $dblink->real_escape_string($subject_id);
+	
+	$query  = "SELECT * ";
+	$query .= "FROM subjects ";
+	$query .= "WHERE id = {$safe_subject_id} ";
+	$query .= "ORDER BY position";
+
+	$subject_result = $dblink->query($query);
+	confirm_query($subject_result);
+	
+	if ($subject = $subject_result->fetch_assoc()) {
+		return $subject;
+	}
+	else {
+		return null;
+	}
+
+}
 function navigation($selected_subject_id, $selected_page_id) {
 
 	$subject_set = find_all_subjects(); 
