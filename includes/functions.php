@@ -91,15 +91,29 @@ function find_subject_by_id($subject_id) {
 	else {
 		return null;
 	}
-
 }
-function navigation($selected_subject_id, $selected_page_id) {
+
+function find_selected_page() {
+	
+	global $current_subject;
+	global $current_page;
+	$current_subject = null;
+	$current_page = null;
+	
+	if (isset($_GET["subject"])) {
+		$current_subject =  find_subject_by_id($_GET["subject"]);
+	} elseif (isset($_GET["page"])) {
+		$current_page =  find_page_by_id($_GET["page"]);
+	} 
+}
+
+function navigation($p_subject, $p_page) {
 
 	$subject_set = find_all_subjects(); 
 	$output ="<ul  class=\"subjects\">";
 	while ($subject=$subject_set->fetch_assoc()) {
 	    $output.="<li";
-	    if ($subject["id"]==$selected_subject_id) {
+	    if ($subject["id"]==$p_subject["id"]) {
 		    $output.= " class=\"selected\"" ;
 	    }
 		$output.=">";
@@ -109,7 +123,7 @@ function navigation($selected_subject_id, $selected_page_id) {
 		$output.="<ul class=\"pages\">";
 		while ($pages=$page_set->fetch_assoc()) {
 			$output.="<li"; 
-			if ($pages["id"]==$selected_page_id) {
+			if ($pages["id"]==$p_page["id"]) {
 			   $output.=" class=\"selected\"";
 			}
 			$output.=">"; 
