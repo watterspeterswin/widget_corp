@@ -1,3 +1,4 @@
+<?php require_once("../includes/session.php"); ?>
 <?php require_once("../includes/functions.php"); ?>
 <?php $dblink=GetConnection(); ?>
 <?php include("../includes/layout/header.php"); ?>
@@ -10,6 +11,7 @@
 	<a href="new_subject.php">+ Add a subject</a>
 	</div>
 	<div id="page">
+	    <?php echo message(); ?>
 		<ul>
 			<li><a href="manage_content.php">Manage Content</a></li>
 			<li><a href="manage_admins.php">Manage Admins</a></li>

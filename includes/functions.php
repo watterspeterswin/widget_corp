@@ -1,4 +1,10 @@
 <?php
+
+function redirect_to($new_location) {
+	header("Location: ". $new_location);
+	exit;
+}
+
 function GetConnection() 
 {
 	define("DB_USER", "root");
@@ -15,11 +21,36 @@ function GetConnection()
 	return $dblink;
 }
 
+
+function mysql_prep($instring) {
+	
+	global $dblink;
+	
+	$instring = $dblink->real_escape_string($instring);
+	
+	return $instring;
+}
+
 function confirm_query($result) {
 	if (!$result) {
 		die("database query failed");
 	}
 }
+
+function get_subject_count() {
+	
+    global $dblink;
+	
+	$query  = "SELECT count(*) as subject_count ";
+	$query .= "FROM subjects ";
+
+	$subject_set = $dblink->query($query);
+	confirm_query($subject_set);
+    $subject_count = $subject_set->fetch_assoc();
+	
+	return $subject_count["subject_count"];
+}
+
 
 function find_all_subjects() {
 	
@@ -39,10 +70,9 @@ function find_all_subjects() {
 function find_pages_for_subject($subject_id) {	
 	global $dblink;
 	
-	$safe_subject_id = $dblink->real_escape_string($subject_id);
 	$query  = "SELECT * ";
 	$query .= "FROM pages ";
-	$query .= "WHERE visible AND subject_id = {$safe_subject_id} ";
+	$query .= "WHERE visible AND subject_id = {$subject_id} ";
 	$query .= "ORDER BY position";
 
 	$page_result = $dblink->query($query);
@@ -54,11 +84,9 @@ function find_pages_for_subject($subject_id) {
 function find_page_by_id($page_id) {	
 	global $dblink;
 	
-	$safe_page_id = $dblink->real_escape_string($page_id);
-	
 	$query  = "SELECT * ";
 	$query .= "FROM pages ";
-	$query .= "WHERE id = {$safe_page_id} ";
+	$query .= "WHERE id = {$page_id} ";
 	$query .= "ORDER BY position";
 
 	$page_result = $dblink->query($query);
@@ -75,11 +103,9 @@ function find_page_by_id($page_id) {
 function find_subject_by_id($subject_id) {	
 	global $dblink;
 	
-	$safe_subject_id = $dblink->real_escape_string($subject_id);
-	
 	$query  = "SELECT * ";
 	$query .= "FROM subjects ";
-	$query .= "WHERE id = {$safe_subject_id} ";
+	$query .= "WHERE id = {$subject_id} ";
 	$query .= "ORDER BY position";
 
 	$subject_result = $dblink->query($query);
@@ -119,8 +145,8 @@ function navigation($p_subject, $p_page) {
 		$output.=">";
 		$output.="<a href=\"manage_content.php?subject=";
 		$output.=urlencode($subject["id"])."\">{$subject["menu_name"]}</a>";
-		$page_set = find_pages_for_subject($subject["id"]); 
 		$output.="<ul class=\"pages\">";
+		$page_set = find_pages_for_subject($subject["id"]); 
 		while ($pages=$page_set->fetch_assoc()) {
 			$output.="<li"; 
 			if ($pages["id"]==$p_page["id"]) {
@@ -130,9 +156,8 @@ function navigation($p_subject, $p_page) {
 			$output.="<a href=\"manage_content.php?page=";
 			$output.=urlencode($pages["id"]);
 			$output.="\">";
-			$output.=$pages["menu_name"]; 
+			$output.=$pages["menu_name"];
 			$output.="</a></li>";
-
 		}
         $page_set->free_result();
 		$output.="</ul></li>";
@@ -143,3 +168,18 @@ function navigation($p_subject, $p_page) {
 	return $output;
 }
 
+function form_errors($errors=array()) {
+	$output = "";
+	if (!empty($errors)) {
+	  $output .= "<div class=\"error\">";
+	  $output .= "Please fix the following errors:";
+	  $output .= "<ul>";
+	  foreach ($errors as $key => $error) {
+	    $output .= "<li>{$error}</li>";
+	  }
+	  $output .= "</ul>";
+	  $output .= "</div>";
+	}
+	return $output;
+}
+?>
