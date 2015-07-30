@@ -9,6 +9,7 @@
 	<?php echo navigation($current_subject, $current_page); ?>
 	<br />
 	<a href="new_subject.php">+ Add a subject</a>
+
 	</div>
 	<div id="page">
 	    <?php echo message(); ?>
@@ -21,6 +22,7 @@
 			if ($current_subject) { 
 			    echo "<h2>Manage Subject</h2>";
 				echo $current_subject["menu_name"];
+				echo "<br/><a href=\"edit_subject.php?subject={$current_subject["id"]}\">Edit Subject</a>";
 			}
 			elseif ($current_page) {
 				echo "<h2>Manage Page</h2>";

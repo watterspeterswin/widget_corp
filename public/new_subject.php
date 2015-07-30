@@ -12,7 +12,7 @@
 	<?php echo message(); ?>
 	<?php $errors=errors(); ?>
 	<?php echo form_errors($errors); ?>
-		<h2></h2>
+		<h2>Create Subject</h2>
         <form action="create_subject.php" method="post">
 			<p>Menu Name:
 				<input type="text" name="menu_name" value="" />
