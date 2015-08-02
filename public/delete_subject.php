@@ -1,0 +1,20 @@
+<?php require_once("../includes/session.php"); ?>
+<?php require_once("../includes/functions.php"); ?>
+<?php $dblink=GetConnection(); ?>
+<?php
+	$current_subject = find_subject_by_id($_GET["subject"]);
+	if (!isset($current_subject)) {
+		redirect_to("manage_content.php");
+	}
+	$id = $current_subject["id"];
+	$query = "DELETE FROM subjects where id={$id} LIMIT 1";
+	$result = $dblink->query($query);
+	if ($result && $dblink->affected_rows == 1) {
+		$_SESSION["message"] = "Subject deleted";
+		redirect_to("manage_content.php");
+	}
+	else {
+		$_SESSION["message"] = "Subject delete failed";
+		redirect_to("manage_content.php?subject={$id}");
+	}
+?>
