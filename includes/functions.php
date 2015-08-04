@@ -144,8 +144,9 @@ function navigation($p_subject, $p_page) {
 	    }
 		$output.=">";
 		$output.="<a href=\"manage_content.php?subject=";
-		$output.=urlencode($subject["id"])."\">{$subject["menu_name"]}</a>";
-		$output.="<ul class=\"pages\">";
+		$output.=urlencode($subject["id"])."\">";
+		$output.=htmlentities($subject["menu_name"]);
+		$output.="</a><ul class=\"pages\">";
 		$page_set = find_pages_for_subject($subject["id"]); 
 		while ($pages=$page_set->fetch_assoc()) {
 			$output.="<li"; 
@@ -156,7 +157,7 @@ function navigation($p_subject, $p_page) {
 			$output.="<a href=\"manage_content.php?page=";
 			$output.=urlencode($pages["id"]);
 			$output.="\">";
-			$output.=$pages["menu_name"];
+			$output.=htmlentities($pages["menu_name"]);
 			$output.="</a></li>";
 		}
         $page_set->free_result();
@@ -175,7 +176,9 @@ function form_errors($errors=array()) {
 	  $output .= "Please fix the following errors:";
 	  $output .= "<ul>";
 	  foreach ($errors as $key => $error) {
-	    $output .= "<li>{$error}</li>";
+	    $output .= "<li>";
+		$output .= htmlentities($error);
+		$output .= "</li>";
 	  }
 	  $output .= "</ul>";
 	  $output .= "</div>";
