@@ -81,6 +81,22 @@ function find_pages_for_subject($subject_id) {
 	return $page_result;
 }
 
+function get_page_count_for_subject($subject_id)  {
+	
+    global $dblink;
+	
+	$query  = "SELECT count(*) as page_count ";
+	$query .= "FROM pages ";
+	$query .= "WHERE subject_id = {$subject_id} ";
+
+	$page_set = $dblink->query($query);
+	confirm_query($page_set);
+    $page_count = $page_set->fetch_assoc();
+	
+	return $page_count["page_count"];
+}
+
+
 function find_page_by_id($page_id) {	
 	global $dblink;
 	
