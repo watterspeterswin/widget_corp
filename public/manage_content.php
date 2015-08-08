@@ -1,6 +1,7 @@
 <?php require_once("../includes/session.php"); ?>
 <?php require_once("../includes/functions.php"); ?>
 <?php $dblink=GetConnection(); ?>
+<?php $layout_context="admin"; ?>
 <?php include("../includes/layout/header.php"); ?>
 <?php find_selected_page(); ?>
 
@@ -10,7 +11,7 @@
 	<a href="admin.php">&laquo; Main menu</a>
 	<?php echo navigation($current_subject, $current_page); ?>
 	<br />
-	<a href="new_subject.php">+ Add a subject</a>
+	<a href="new_subject.php">+ Add subject</a><br/>
 
 	</div>
 	<div id="page">
@@ -38,7 +39,9 @@
 				echo "<div class=\"view-content\">";
 				echo htmlentities($current_page["content"]);
 				echo "</div>";
+				
 				echo "<br/><br/><a href=\"new_page.php?subject={$current_page["subject_id"]}\">Add Page</a>";
+				echo "<br/><br/><a href=\"edit_page.php?page={$current_page["id"]}\">Edit Page</a>";
 				echo "<br/><br/><a href=\"delete_page.php?page={$current_page["id"]}\">Delete Page</a>";
 
 			}

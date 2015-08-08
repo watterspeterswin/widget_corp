@@ -12,19 +12,17 @@ function fieldname_as_text($fn) {
 // use === to avoid false positives
 // empty() would consider "0" to be empty
 function has_presence($value) {
-	if ($value) {
-		return isset($value) && $value !== "";
-	}
-	else {
-		return False;
-	}
+	return isset($value) && $value !== "";
 }
 
 function validate_has_presences($fields_with_presence) {
 	global $errors;
 	// Expects an assoc. array
 	foreach($fields_with_presence as $field ) {
-		$value=isset($_POST[$field]) ? trim($_POST[$field]) : null;
+		$value = null;
+		if (array_key_exists($field, $_POST)){
+			$value= trim($_POST[$field]);
+		}
 		if (!has_presence($value)) {
 			$errors[$field] = fieldname_as_text($field) . " cannot be blank";
 		}

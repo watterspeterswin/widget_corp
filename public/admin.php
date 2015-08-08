@@ -10,8 +10,8 @@
 	$result = $dblink->query($query);
 	confirm_query($result);
 ?>
+<?php $layout_context="admin"; ?>
 <?php include("../includes/layout/header.php"); ?>
-
 <div id="main">
 	<div id="navigation">
 	&nbsp;

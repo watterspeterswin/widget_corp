@@ -3,10 +3,19 @@
 	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
 <head>
-<title>Widget Corp</title>
+<?php 
+if (!isset($layout_context)) {
+	$layout_context = "public";
+}
+$TitleName="Widget Corp";
+if ($layout_context=="admin") {
+	$TitleName.=" Admin";
+}
+?>
+<title><?php echo $TitleName; ?></title>
 <link href="stylesheet/public.css" media="all" rel="stylesheet" type="text/css"></link>
 </head>
 <body>
 <div id="header">
-	<h1>Widget Corp</h1>
+	<h1><?php echo $TitleName; ?></?php></h1>
 </div>

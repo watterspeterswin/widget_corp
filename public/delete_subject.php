@@ -2,13 +2,13 @@
 <?php require_once("../includes/functions.php"); ?>
 <?php $dblink=GetConnection(); ?>
 <?php
-	$current_subject = find_subject_by_id($_GET["subject"]);
+	$current_subject = find_subject_by_id($_GET["subject"],false);
 	if (!isset($current_subject)) {
 		redirect_to("manage_content.php");
 	}
 	$id = $current_subject["id"];
 	
-	$pages_set = find_pages_for_subject($id);
+	$pages_set = find_pages_for_subject($id, false);
 	if ($pages_set && $pages_set->num_rows) {
 		$_SESSION["message"] = "Subject has pages: cannot delete";
 		redirect_to("manage_content.php?subject={$id}");

@@ -52,13 +52,15 @@ function get_subject_count() {
 }
 
 
-function find_all_subjects() {
+function find_all_subjects($public=true) {
 	
     global $dblink;
 	
 	$query  = "SELECT * ";
 	$query .= "FROM subjects ";
-	$query .= "WHERE visible ";
+	if ($public) {
+		$query .= "WHERE visible ";
+	}
 	$query .= "ORDER BY position";
 
 	$subject_set = $dblink->query($query);
@@ -67,13 +69,34 @@ function find_all_subjects() {
 	return $subject_set;
 }
 
-function find_pages_for_subject($subject_id) {	
+function find_all_admins() {
+	
+    global $dblink;
+	
+	$query  = "SELECT * ";
+	$query .= "FROM admins ";
+	$query .= "ORDER BY username";
+
+	$admins_set = $dblink->query($query);
+	confirm_query($admins_set);
+		
+	return $admins_set;
+}
+
+function find_pages_for_subject($subject_id, $public=true, $default=false) {	
 	global $dblink;
 	
 	$query  = "SELECT * ";
 	$query .= "FROM pages ";
-	$query .= "WHERE visible AND subject_id = {$subject_id} ";
-	$query .= "ORDER BY position";
+	$query .= "WHERE subject_id = {$subject_id} ";
+
+	if ($public) {
+		$query .="AND visible ";
+	}
+	$query .= "ORDER BY position ";
+	if ($default) {
+		$query .= "Limit 1";
+	}
 
 	$page_result = $dblink->query($query);
 	confirm_query($page_result);
@@ -96,13 +119,15 @@ function get_page_count_for_subject($subject_id)  {
 	return $page_count["page_count"];
 }
 
-
-function find_page_by_id($page_id) {	
+function find_page_by_id($page_id,$public=false) {	
 	global $dblink;
 	
 	$query  = "SELECT * ";
 	$query .= "FROM pages ";
 	$query .= "WHERE id = {$page_id} ";
+	if ($public) {
+		$query .= "AND visible ";		
+	}
 	$query .= "ORDER BY position";
 
 	$page_result = $dblink->query($query);
@@ -135,23 +160,46 @@ function find_subject_by_id($subject_id) {
 	}
 }
 
-function find_selected_page() {
+function find_admin_by_id($admin_id) {	
+	global $dblink;
+	
+	$query  = "SELECT * ";
+	$query .= "FROM admins ";
+	$query .= "WHERE id = {$admin_id} ";
+
+	$admin_result = $dblink->query($query);
+	confirm_query($admin_result);
+	
+	if ($admin = $admin_result->fetch_assoc()) {
+		return $admin;
+	}
+	else {
+		return null;
+	}
+}
+
+
+function find_selected_page($public=false) {
 	
 	global $current_subject;
 	global $current_page;
+	global $current_admin;
 	$current_subject = null;
 	$current_page = null;
+	$current_admin = null;
 	
 	if (isset($_GET["subject"])) {
 		$current_subject =  find_subject_by_id($_GET["subject"]);
 	} elseif (isset($_GET["page"])) {
-		$current_page =  find_page_by_id($_GET["page"]);
-	} 
+		$current_page =  find_page_by_id($_GET["page"],$public);
+	} elseif (isset($_GET["admin"])) {
+		$current_admin =  find_admin_by_id($_GET["admin"]);
+	} 	
 }
 
 function navigation($p_subject, $p_page) {
 
-	$subject_set = find_all_subjects(); 
+	$subject_set = find_all_subjects(false); 
 	$output ="<ul  class=\"subjects\">";
 	while ($subject=$subject_set->fetch_assoc()) {
 	    $output.="<li";
@@ -163,7 +211,7 @@ function navigation($p_subject, $p_page) {
 		$output.=urlencode($subject["id"])."\">";
 		$output.=htmlentities($subject["menu_name"]);
 		$output.="</a><ul class=\"pages\">";
-		$page_set = find_pages_for_subject($subject["id"]); 
+		$page_set = find_pages_for_subject($subject["id"],false); 
 		while ($pages=$page_set->fetch_assoc()) {
 			$output.="<li"; 
 			if ($pages["id"]==$p_page["id"]) {
@@ -184,6 +232,70 @@ function navigation($p_subject, $p_page) {
 	
 	return $output;
 }
+
+function public_navigation($p_subject, $p_page) {
+
+	$subject_set = find_all_subjects(); 
+	$output ="<ul  class=\"subjects\">";
+	while ($subject=$subject_set->fetch_assoc()) {
+	    $output.="<li";
+	    if ($subject["id"]==$p_subject["id"]) {
+		    $output.= " class=\"selected\"" ;
+	    }
+		$output.=">";
+		$output.="<a href=\"index.php?subject=";
+		$output.=urlencode($subject["id"])."\">";
+		$output.=htmlentities($subject["menu_name"]);
+		$output.="</a>";
+		if ($subject["id"]==$p_subject["id"]
+		  ||$subject["id"]==$p_page["subject_id"]) {
+			$output.="<ul class=\"pages\">";
+			$page_set = find_pages_for_subject($subject["id"]); 
+			while ($pages=$page_set->fetch_assoc()) {
+				$output.="<li"; 
+				if ($pages["id"]==$p_page["id"]) {
+				   $output.=" class=\"selected\"";
+				}
+				$output.=">"; 
+				$output.="<a href=\"index.php?page=";
+				$output.=urlencode($pages["id"]);
+				$output.="\">";
+				$output.=htmlentities($pages["menu_name"]);
+				$output.="</a></li>";
+			}
+			$page_set->free_result();
+			$output.="</ul>";
+		}
+		$output.="</li>";
+	}
+	$output.="</ul>";
+	$subject_set->free_result();
+	
+	return $output;
+}
+
+function admin_navigation($p_admin) {
+
+	$admin_set = find_all_admins(false); 
+	$output ="<ul  class=\"admins\">";
+	while ($admin=$admin_set->fetch_assoc()) {
+	    $output.="<li";
+	    if ($admin["id"]==$p_admin["id"]) {
+		    $output.= " class=\"selected\"" ;
+	    }
+		$output.=">";
+		$output.="<a href=\"manage_admins.php?admin=";
+		$output.=urlencode($admin["id"])."\">";
+		$output.=htmlentities($admin["username"]);
+		$output.="</a>";
+		$output.="</li>";
+	}
+	$output.="</ul>";
+	$admin_set->free_result();
+	
+	return $output;
+}
+
 
 function form_errors($errors=array()) {
 	$output = "";

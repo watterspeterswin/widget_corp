@@ -1,6 +1,7 @@
 <?php require_once("../includes/session.php"); ?>
 <?php require_once("../includes/functions.php"); ?>
 <?php $dblink=GetConnection(); ?>
+<?php $layout_context="admin"; ?>
 <?php include("../includes/layout/header.php"); ?>
 <?php find_selected_page(); ?>
 <?php 
@@ -38,8 +39,8 @@
 				&nbsp;
 				<input type="radio" name="visible" value="1">yes
 			</p>
-			<p>content:
-				<input type="text" name="content" value="" />
+			<p>Content:<br/>
+			<textarea name="content" id="styled" cols="50" rows="5"></textarea>
 			</p>
 			<input type="hidden" name="subject_id" value="<?php echo $id ?>" />
 			<input type="submit" name="submit" value="Create Page" />
