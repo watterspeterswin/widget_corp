@@ -37,6 +37,7 @@ if (isset($_POST["submit"])) {
 	}
 }
 ?>
+<?php confirm_loggedin(); ?>
 <?php $layout_context="admin"; ?>
 <?php include("../includes/layout/header.php"); ?>
 <div id="main">

@@ -1,7 +1,8 @@
 <?php require_once("../includes/session.php"); ?>
 <?php require_once("../includes/functions.php"); ?>
-<?php $dblink=GetConnection(); ?>
+<?php confirm_loggedin(); ?>
 <?php $layout_context="admin"; ?>
+<?php $dblink=GetConnection(); ?>
 <?php include("../includes/layout/header.php"); ?>
 <?php find_selected_page(); ?>
 

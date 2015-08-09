@@ -2,6 +2,9 @@
 </body>
 </html>
 <?php
+
+ob_end_flush();
+
 if (isset($dblink)) {
 	$dblink->close(); 
 }

@@ -1,8 +1,41 @@
 <?php
-
 function redirect_to($new_location) {
 	header("Location: ". $new_location);
 	exit;
+}
+function password_encrypt($password) {
+	
+	$format="$2y$10$";
+	$salt = "Salt22CharactersOrMore";
+	$format_and_salt = $format . $salt;
+	$hash= crypt($password, $format_and_salt);
+	return $hash;
+}
+
+function password_check($password, $hashed_password) {
+	$hash = password_encrypt($password);
+	if ($hash == $hashed_password) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+function attempt_login($username, $password) {
+	
+	$admin = find_admin_by_username($username);
+	if ($admin) {
+		if (password_check($password,$admin["hashed_password"])) {
+			return $admin;
+		}
+		else {
+			return false;
+		}
+	}
+	else {
+		return false;
+	}
 }
 
 function GetConnection() 
@@ -50,7 +83,6 @@ function get_subject_count() {
 	
 	return $subject_count["subject_count"];
 }
-
 
 function find_all_subjects($public=true) {
 	
@@ -166,6 +198,24 @@ function find_admin_by_id($admin_id) {
 	$query  = "SELECT * ";
 	$query .= "FROM admins ";
 	$query .= "WHERE id = {$admin_id} ";
+
+	$admin_result = $dblink->query($query);
+	confirm_query($admin_result);
+	
+	if ($admin = $admin_result->fetch_assoc()) {
+		return $admin;
+	}
+	else {
+		return null;
+	}
+}
+
+function find_admin_by_username($username) {	
+	global $dblink;
+	$safe_username=mysql_prep($username);
+	$query  = "SELECT * ";
+	$query .= "FROM admins ";
+	$query .= "WHERE username = '{$safe_username}' LIMIT 1 ";
 
 	$admin_result = $dblink->query($query);
 	confirm_query($admin_result);
@@ -312,5 +362,11 @@ function form_errors($errors=array()) {
 	  $output .= "</div>";
 	}
 	return $output;
+}
+
+function confirm_loggedin(){
+	if (!isset($_SESSION["admin_id"])) {
+		redirect_to("login.php");
+	}
 }
 ?>
